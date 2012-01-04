@@ -50,6 +50,21 @@ Add this to your view:
 	
 	echo $this->Recaptcha->display();
 
+If for some reason you decide not to check the Recaptcha, you can opt-out by calling $this->[MODEL]->recaptcha=true; before you validate/save your data.
+
+	public $components = array('Recaptcha.Recaptcha' => array('actions' => array('add', 'delete')));
+
+	public function add() {
+		if ($this->request->is('post')) {
+		$this->User->recaptcha=true;
+		if ($this->User->save($this->request->data)) {
+			//save action
+		} else {
+			//fail action
+		}
+	    }
+	}
+
 #### 2) Use without actions -> check recaptcha manualy ####
 
 You have to verify captcha manually in your controller.
