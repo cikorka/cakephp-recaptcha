@@ -103,7 +103,7 @@ The plugin itself is already capable of:
 ## Requirements ##
 
 * PHP version: PHP 5.2+
-* CakePHP version: Cakephp 2.0.x Stable
+* CakePHP version: Cakephp 2.x Stable
 
 ## Support ##
 
