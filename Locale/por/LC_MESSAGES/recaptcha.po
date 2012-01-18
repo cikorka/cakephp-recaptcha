@@ -27,7 +27,7 @@ msgid "You must set your private recaptcha key using Cofigure::write('Recaptcha.
 msgstr "Você deve definir a sua chave privada usando Cofigure::write('Recaptcha.privateKey', 'your-key');!"
 
 #: /controllers/components/recaptcha.php:110
-msgid "Incorect captcha"
+msgid "Incorrect captcha"
 msgstr "Captcha incorreto"
 
 #: /views/helpers/recaptcha.php:115
