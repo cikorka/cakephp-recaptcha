@@ -56,9 +56,9 @@ class RecaptchaHelper extends AppHelper {
 
     /**
      * Displays the Recaptcha input
-     * 
+     *
      * @param array $options An array of options
-     * 
+     *
      * ### Options:
      *
      * - `element` String, name of the view element that can be used instead of the hardcoded HTML structure from this helper
@@ -68,7 +68,7 @@ class RecaptchaHelper extends AppHelper {
      * - `div` Array of options for the div tag the recaptcha is wrapped with, set to false if you want to disable it
      * - `recaptchaOptions` assoc array of options to pass into RecaptchaOptions var, like 'theme', 'lang'
      *    or 'custom_translations' to runtime configure the widget.
-     * 
+     *
      * @return string The resulting mark up
      * @access public
      */
@@ -104,7 +104,7 @@ class RecaptchaHelper extends AppHelper {
                 $elementOptions = $element[$keys[0]];
             }
 
-            return $this->View->element($element, $elementOptions);
+            return $this->_View->element($element, $elementOptions);
         }
 
         $jsonOptions = preg_replace('/"callback":"([^"\r\n]*)"/', '"callback":$1', json_encode($recaptchaOptions));
@@ -113,7 +113,7 @@ class RecaptchaHelper extends AppHelper {
         if (empty($this->params['isAjax'])) {
             $configScript = sprintf('var RecaptchaOptions = %s', $jsonOptions);
             $this->Html->scriptBlock($configScript, array('inline' => false));
-            
+
             $script = '<script type="text/javascript" src="' . $server . '/challenge?k=' . $publicKey . '"></script>
 				<noscript>
 					<iframe src="' . $server . '/noscript?k=' . $publicKey . '" height="300" width="500" frameborder="0"></iframe><br/>
@@ -128,14 +128,14 @@ class RecaptchaHelper extends AppHelper {
 
             $this->Form->unlockField('recaptcha_challenge_field');
             $this->Form->unlockField('recaptcha_response_field');
-            
+
             //$this->settings['errorType'] = 'formInput';
-            
+
             if ($this->settings['errorType'] == 'formInput' && $this->settings['useActions']) {
                 $this->Form->unlockField('recaptcha');
                 echo $this->Form->input('recaptcha', array('hidden' => true, 'label' => ''));
             }
-            
+
             if ($this->isError() && $this->settings['errorType'] == 'simulateError') {
                 $script = '<div class="error">' . $script . '<div class="error-message">' . $this->getError() . '</div></div>';
             }
@@ -257,7 +257,7 @@ class RecaptchaHelper extends AppHelper {
      * Gets html to display an email address given a public an private key to get a key go to:
      * http://mailhide.recaptcha.net/apikey
      *
-     * @param string Email 
+     * @param string Email
      * @return string
      */
     public function mailHide($email) {
