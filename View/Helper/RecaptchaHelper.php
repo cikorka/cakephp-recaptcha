@@ -116,7 +116,7 @@ class RecaptchaHelper extends AppHelper {
 
             $script = '<script type="text/javascript" src="' . $server . '/challenge?k=' . $publicKey . '"></script>
 				<noscript>
-					<iframe src="' . $server . '/noscript?k=' . $publicKey . '" height="300" width="500" frameborder="0"></iframe><br/>
+					<iframe src="' . $server . '/noscript?k=' . $publicKey . '" height="300" width="500" style="border: 0px;"></iframe><br/>
 					<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
 					<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
 				</noscript>';

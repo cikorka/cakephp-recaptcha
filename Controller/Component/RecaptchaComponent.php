@@ -65,7 +65,7 @@ class RecaptchaComponent extends Component {
      * Callback
      *
      * @param object Controller object
-     * @param Array $settings 
+     * @param Array $settings
      */
     public function initialize(Controller $controller, $settings = array()) {
         if ($controller->name == 'CakeError') {
@@ -113,7 +113,7 @@ class RecaptchaComponent extends Component {
                 }
                 // Manual mode
             } else {
-                $helper_options['useActions'] = false;   
+                $helper_options['useActions'] = false;
             }
             $this->Controller->helpers['Recaptcha.Recaptcha'] = $helper_options;
             //debug($this->Controller->helpers);
