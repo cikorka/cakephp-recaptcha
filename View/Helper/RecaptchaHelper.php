@@ -18,135 +18,135 @@
  */
 class RecaptchaHelper extends AppHelper {
 
-    /**
-     * Secure API Url
-     *
-     * @var string
-     */
-    public $secureApiUrl = 'https://www.google.com/recaptcha/api';
+/**
+ * Secure API Url
+ *
+ * @var string
+ */
+	public $secureApiUrl = 'https://www.google.com/recaptcha/api';
 
-    /**
-     * API Url
-     *
-     * @var string
-     */
-    public $apiUrl = 'http://www.google.com/recaptcha/api';
+/**
+ * API Url
+ *
+ * @var string
+ */
+	public $apiUrl = 'http://www.google.com/recaptcha/api';
 
-    /**
-     * View helpers
-     *
-     * @var array
-     */
-    public $helpers = array('Form', 'Html');
-    public $settings = array('error' => null, 'useActions' => true, 'errorType' => 'simulateError');
+/**
+ * View helpers
+ *
+ * @var array
+ */
+	public $helpers = array('Form', 'Html');
 
-    function __construct(View $View, $settings = array()) {
-        parent::__construct($View, $settings);
-        $this->settings = array_merge($this->settings, $settings);
-        //debug($settings);
-    }
+	public $settings = array('error' => null, 'useActions' => true, 'errorType' => 'simulateError');
 
-    function isError() {
-        return!($this->settings['error'] == null);
-    }
+	public function __construct(View $View, $settings = array()) {
+		parent::__construct($View, $settings);
+		$this->settings = array_merge($this->settings, $settings);
+		//debug($settings);
+	}
 
-    function getError() {
-        return $this->settings['error'];
-    }
+	public function isError() {
+		return !($this->settings['error'] == null);
+	}
 
-    /**
-     * Displays the Recaptcha input
-     *
-     * @param array $options An array of options
-     *
-     * ### Options:
-     *
-     * - `element` String, name of the view element that can be used instead of the hardcoded HTML structure from this helper
-     * - `publicKey` String, default is read from Configure::read('Recaptcha.publicKey'), you can override it here
-     * - `error` String, optional error message that is displayed using Form::error()
-     * - `ssl` Boolean, use SSL or not, default is true
-     * - `div` Array of options for the div tag the recaptcha is wrapped with, set to false if you want to disable it
-     * - `recaptchaOptions` assoc array of options to pass into RecaptchaOptions var, like 'theme', 'lang'
-     *    or 'custom_translations' to runtime configure the widget.
-     *
-     * @return string The resulting mark up
-     * @access public
-     */
-    public function display($options = array()) {
-        $defaults = array(
-            'errorInput' => '',
-            'element' => null,
-            'publicKey' => Configure::read('Recaptcha.publicKey'),
-            'error' => null,
-            'ssl' => true,
-            'error' => false,
-            'div' => array(
-                'class' => 'recaptcha'),
-            'recaptchaOptions' => array(
-                'theme' => 'red',
-                'lang' => 'en',
-                'custom_translations' => array(),
-                'callback' => 'Recaptcha.focus_response_field'));
+	public function getError() {
+		return $this->settings['error'];
+	}
 
-        $options = array_merge($defaults, $options);
-        extract($options);
+/**
+ * Displays the Recaptcha input
+ *
+ * @param array $options An array of options
+ *
+ * ### Options:
+ *
+ * - `element` String, name of the view element that can be used instead of the hardcoded HTML structure from this helper
+ * - `publicKey` String, default is read from Configure::read('Recaptcha.publicKey'), you can override it here
+ * - `error` String, optional error message that is displayed using Form::error()
+ * - `ssl` Boolean, use SSL or not, default is true
+ * - `div` Array of options for the div tag the recaptcha is wrapped with, set to false if you want to disable it
+ * - `recaptchaOptions` assoc array of options to pass into RecaptchaOptions var, like 'theme', 'lang'
+ *	  or 'custom_translations' to runtime configure the widget.
+ *
+ * @return string The resulting mark up
+ * @access public
+ */
+	public function display($options = array()) {
+		$defaults = array(
+			'errorInput' => '',
+			'element' => null,
+			'publicKey' => Configure::read('Recaptcha.publicKey'),
+			'error' => null,
+			'ssl' => true,
+			'error' => false,
+			'div' => array(
+				'class' => 'recaptcha'),
+			'recaptchaOptions' => array(
+				'theme' => 'red',
+				'lang' => 'en',
+				'custom_translations' => array(),
+				'callback' => 'Recaptcha.focus_response_field'));
 
-        if ($ssl) {
-            $server = $this->secureApiUrl;
-        } else {
-            $server = $this->apiUrl;
-        }
+		$options = array_merge($defaults, $options);
+		extract($options);
 
-        if (!empty($element)) {
-            $elementOptions = array();
-            if (is_array($element)) {
-                $keys = array_keys($element);
-                $elementOptions = $element[$keys[0]];
-            }
+		if ($ssl) {
+			$server = $this->secureApiUrl;
+		} else {
+			$server = $this->apiUrl;
+		}
 
-            return $this->_View->element($element, $elementOptions);
-        }
+		if (!empty($element)) {
+			$elementOptions = array();
+			if (is_array($element)) {
+				$keys = array_keys($element);
+				$elementOptions = $element[$keys[0]];
+			}
 
-        $jsonOptions = preg_replace('/"callback":"([^"\r\n]*)"/', '"callback":$1', json_encode($recaptchaOptions));
-        unset($recaptchaOptions);
+			return $this->_View->element($element, $elementOptions);
+		}
 
-        if (empty($this->params['isAjax'])) {
-            $configScript = sprintf('var RecaptchaOptions = %s', $jsonOptions);
-            $this->Html->scriptBlock($configScript, array('inline' => false));
+		$jsonOptions = preg_replace('/"callback":"([^"\r\n]*)"/', '"callback":$1', json_encode($recaptchaOptions));
+		unset($recaptchaOptions);
 
-            $script = '<script type="text/javascript" src="' . $server . '/challenge?k=' . $publicKey . '"></script>
+		if (empty($this->params['isAjax'])) {
+			$configScript = sprintf('var RecaptchaOptions = %s', $jsonOptions);
+			$this->Html->scriptBlock($configScript, array('inline' => false));
+
+			$script = '<script type="text/javascript" src="' . $server . '/challenge?k=' . $publicKey . '"></script>
 				<noscript>
 					<iframe src="' . $server . '/noscript?k=' . $publicKey . '" height="300" width="500" style="border: 0px;"></iframe><br/>
 					<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
 					<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
 				</noscript>';
 
+			if ($options['div'] != false) {
+				$script = $this->Html->tag('div', $script, $options['div']);
+			}
 
-            if ($options['div'] != false) {
-                $script = $this->Html->tag('div', $script, $options['div']);
-            }
+			$this->Form->unlockField('recaptcha_challenge_field');
+			$this->Form->unlockField('recaptcha_response_field');
 
-            $this->Form->unlockField('recaptcha_challenge_field');
-            $this->Form->unlockField('recaptcha_response_field');
+			//$this->settings['errorType'] = 'formInput';
 
-            //$this->settings['errorType'] = 'formInput';
+			if ($this->settings['errorType'] == 'formInput' && $this->settings['useActions']) {
+				$this->Form->unlockField('recaptcha');
+				echo $this->Form->input('recaptcha', array('hidden' => true, 'label' => ''));
+			}
 
-            if ($this->settings['errorType'] == 'formInput' && $this->settings['useActions']) {
-                $this->Form->unlockField('recaptcha');
-                echo $this->Form->input('recaptcha', array('hidden' => true, 'label' => ''));
-            }
+			if ($this->isError() && $this->settings['errorType'] == 'simulateError') {
+				$script = '<div class="error">' . $script . '<div class="error-message">' . $this->getError() . '</div></div>';
+			}
 
-            if ($this->isError() && $this->settings['errorType'] == 'simulateError') {
-                $script = '<div class="error">' . $script . '<div class="error-message">' . $this->getError() . '</div></div>';
-            }
+			return $script;
+		}
 
-            return $script;
-        }
+		$id = uniqid('recaptcha-');
 
-        $id = uniqid('recaptcha-');
-
-        return '<div id="' . $id . '"></div>' .
-                '<script>
+		return '<div id="' . $id . '"></div>' .
+				'<script>
 					if (window.Recaptcha == undefined) {
 						(function() {
 							var headID = document.getElementsByTagName("head")[0];
@@ -162,110 +162,116 @@ class RecaptchaHelper extends AppHelper {
 						setTimeout(\'Recaptcha.create("' . $publicKey . '", "' . $id . '", ' . $jsonOptions . ')\', 1000);
 					}
 				</script>';
-    }
+	}
 
-    /**
-     * Recaptcha signup URL
-     *
-     * @return string
-     */
-    public function signupUrl($appName = null) {
-        return "http://recaptcha.net/api/getkey?domain=" . WWW_ROOT . '&amp;app=' . urlencode($appName);
-    }
+/**
+ * Recaptcha signup URL
+ *
+ * @return string
+ */
+	public function signupUrl($appName = null) {
+		return "http://recaptcha.net/api/getkey?domain=" . WWW_ROOT . '&amp;app=' . urlencode($appName);
+	}
 
-    /**
-     * AES Pad
-     *
-     * @param string value
-     * @return string
-     */
-    private function __AesPad($val) {
-        $blockSize = 16;
-        $numpad = $blockSize - (strlen($val) % $blockSize);
-        return str_pad($val, strlen($val) + $numpad, chr($numpad));
-    }
+/**
+ * AES Pad
+ *
+ * @param string value
+ * @return string
+ */
+	//@codingStandardsIgnoreStart
+	private function __AesPad($val) {
+		$blockSize = 16;
+		$numpad = $blockSize - (strlen($val) % $blockSize);
+		return str_pad($val, strlen($val) + $numpad, chr($numpad));
+	}
+	//@codingStandardsIgnoreEnd
 
-    /**
-     * AES Encryption
-     *
-     * @return string
-     */
-    private function __AesEncrypt($value, $key) {
-        if (!function_exists('mcrypt_encrypt')) {
-            throw new Exception(__d('recaptcha', 'To use reCAPTCHA Mailhide, you need to have the mcrypt php module installed.', true));
-        }
+/**
+ * AES Encryption
+ *
+ * @throws Exception
+ * @return string
+ */
+	//@codingStandardsIgnoreStart
+	private function __AesEncrypt($value, $key) {
+		if (!function_exists('mcrypt_encrypt')) {
+			throw new Exception(__d('recaptcha', 'To use reCAPTCHA Mailhide, you need to have the mcrypt php module installed.', true));
+		}
 
-        $mode = MCRYPT_MODE_CBC;
-        $encryption = MCRYPT_RIJNDAEL_128;
-        $value = $this->__AesPad($value);
+		$mode = MCRYPT_MODE_CBC;
+		$encryption = MCRYPT_RIJNDAEL_128;
+		$value = $this->__AesPad($value);
 
-        return mcrypt_encrypt($encryption, $key, $value, $mode, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
-    }
+		return mcrypt_encrypt($encryption, $key, $value, $mode, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
+	}
+	//@codingStandardsIgnoreEnd
 
-    /**
-     * Mail-hide URL
-     *
-     * @return string base 64 encrypted string
-     */
-    private function __mailhideUrlbase64($x) {
-        return strtr(base64_encode($x), '+/', '-_');
-    }
+/**
+ * Mail-hide URL
+ *
+ * @return string base 64 encrypted string
+ */
+	private function __mailhideUrlbase64($x) {
+		return strtr(base64_encode($x), '+/', '-_');
+	}
 
-    /**
-     * Gets the reCAPTCHA Mailhide url for a given email
-     *
-     * @param $email
-     * @return string
-     */
-    public function mailHideUrl($email = null) {
-        $publicKey = Configure::read('Recaptcha.mailHide.publicKey');
-        $privateKey = Configure::read('Recaptcha.mailHide.privateKey');
+/**
+ * Gets the reCAPTCHA Mailhide url for a given email
+ *
+ * @param $email
+ * @throws Exception
+ * @return string
+ */
+	public function mailHideUrl($email = null) {
+		$publicKey = Configure::read('Recaptcha.mailHide.publicKey');
+		$privateKey = Configure::read('Recaptcha.mailHide.privateKey');
 
-        if ($publicKey == '' || $publicKey == null || $privateKey == "" || $privateKey == null) {
-            throw new Exception(__d('recaptcha', "You need to set a private and public mail hide key. Please visit http://mailhide.recaptcha.net/apikey", true));
-        }
+		if ($publicKey == '' || $publicKey == null || $privateKey == "" || $privateKey == null) {
+			throw new Exception(__d('recaptcha', "You need to set a private and public mail hide key. Please visit http://mailhide.recaptcha.net/apikey", true));
+		}
 
-        $key = pack('H*', $privateKey);
-        $cryptmail = $this->__AesEncrypt($email, $key);
+		$key = pack('H*', $privateKey);
+		$cryptmail = $this->__AesEncrypt($email, $key);
 
-        return "http://mailhide.recaptcha.net/d?k=" . $publicKey . "&c=" . $this->__mailhideUrlbase64($cryptmail);
-    }
+		return "http://mailhide.recaptcha.net/d?k=" . $publicKey . "&c=" . $this->__mailhideUrlbase64($cryptmail);
+	}
 
-    /**
-     * Get a part of the email to show
-     *
-     * Given johndoe@example,com return ["john", "example.com"].
-     * the email is then displayed as john...@example.com
-     *
-     * @param string email
-     * @return array
-     */
-    private function __hideEmailParts($email) {
-        $array = preg_split("/@/", $email);
+/**
+ * Get a part of the email to show
+ *
+ * Given johndoe@example,com return ["john", "example.com"].
+ * the email is then displayed as john...@example.com
+ *
+ * @param string email
+ * @return array
+ */
+	private function __hideEmailParts($email) {
+		$array = preg_split("/@/", $email);
 
-        if (strlen($array[0]) <= 4) {
-            $array[0] = substr($array[0], 0, 1);
-        } else if (strlen($array[0]) <= 6) {
-            $array[0] = substr($array[0], 0, 3);
-        } else {
-            $array[0] = substr($array[0], 0, 4);
-        }
-        return $array;
-    }
+		if (strlen($array[0]) <= 4) {
+			$array[0] = substr($array[0], 0, 1);
+		} else if (strlen($array[0]) <= 6) {
+			$array[0] = substr($array[0], 0, 3);
+		} else {
+			$array[0] = substr($array[0], 0, 4);
+		}
+		return $array;
+	}
 
-    /**
-     * Gets html to display an email address given a public an private key to get a key go to:
-     * http://mailhide.recaptcha.net/apikey
-     *
-     * @param string Email
-     * @return string
-     */
-    public function mailHide($email) {
-        $emailparts = $this->__hideEmailParts($email);
-        $url = $this->mailHideUrl($email);
+/**
+ * Gets html to display an email address given a public an private key to get a key go to:
+ * http://mailhide.recaptcha.net/apikey
+ *
+ * @param string Email
+ * @return string
+ */
+	public function mailHide($email) {
+		$emailparts = $this->__hideEmailParts($email);
+		$url = $this->mailHideUrl($email);
 
-        return htmlentities($emailparts[0]) . "<a href='" . htmlentities($url) .
-                "' onclick=\"window.open('" . htmlentities($url) . "', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;\" title=\"Reveal this e-mail address\">...</a>@" . htmlentities($emailparts [1]);
-    }
+		return htmlentities($emailparts[0]) . "<a href='" . htmlentities($url) .
+				"' onclick=\"window.open('" . htmlentities($url) . "', '', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=500,height=300'); return false;\" title=\"Reveal this e-mail address\">...</a>@" . htmlentities($emailparts[1]);
+	}
 
 }
